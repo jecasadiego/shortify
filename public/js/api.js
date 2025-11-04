@@ -1,34 +1,32 @@
 // ===== Helpers de autenticación token =====
-export function getToken()   { return localStorage.getItem('token') || ''; }
-export function setToken(t)  { localStorage.setItem('token', t || ''); }
+export function getToken() { return localStorage.getItem('token') || ''; }
+export function setToken(t) { localStorage.setItem('token', t || ''); }
 export function clearToken() { localStorage.removeItem('token'); }
 
 // ===== fetch estándar a /api/v1 =====
-export async function apiFetch(path, { method='GET', body=null, auth=true } = {}) {
-  const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
-  if (auth) {
-    const token = getToken();
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-  }
-  const res = await fetch(`/api/v1${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : null,
-  });
+// public/js/api.js
+const API_BASE = '/api/v1';
 
-  const isJson = res.headers.get('content-type')?.includes('application/json');
-  const payload = isJson ? await res.json() : null;
+export async function apiFetch(path, { method = 'GET', body, auth = true } = {}) {
+    const isAbsolute = /^https?:\/\//i.test(path);
+    const normalized = path.startsWith('/') ? path : `/${path}`;
+    const url = isAbsolute ? path : `${API_BASE}${normalized}`;
 
-  // Manejo genérico de errores y 401
-  if (!res.ok) {
-    if (res.status === 401) {
-      clearToken();
-      window.location.href = '/login?e=401';
-      return;
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem('token');
+    if (auth && token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(url, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+        credentials: 'same-origin',
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+        throw new Error(json?.message || `HTTP ${res.status}`);
     }
-    const msg = (payload && (payload.message || payload.error)) || `HTTP ${res.status}`;
-    throw new Error(msg);
-  }
-
-  return payload;
+    return json;
 }
+

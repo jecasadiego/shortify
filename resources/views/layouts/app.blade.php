@@ -69,7 +69,6 @@
       <div id="nav" class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item"><a class="nav-link link-muted" href="/">App</a></li>
-          <li class="nav-item"><a class="nav-link link-muted" href="/stats">Stats</a></li>
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link link-muted" href="/login">Ingresar</a></li>
