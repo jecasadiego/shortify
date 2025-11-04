@@ -9,7 +9,6 @@
                 <div class="text-secondary">Crea, comparte y consulta estadísticas en tiempo real</div>
             </div>
             <div class="d-flex gap-2">
-                <a href="/stats" class="btn btn-outline-light">Ver estadísticas</a>
                 <button id="logoutBtn" class="btn btn-brand text-white">Salir</button>
             </div>
         </div>
